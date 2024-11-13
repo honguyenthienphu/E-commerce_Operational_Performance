@@ -19,24 +19,74 @@
 </ul>
 <h2>IV. Exploring the Dataset</h2>
 <p>In this project, I will write 08 query in Bigquery base on Google Analytics dataset.</p>
-<b>Query 01: Calculate Total visit, Pageview and Transaction for January, February and March 2017 (order by month)</b>
+<h3>Query 01: Calculate Total visit, Pageview and Transaction for January, February and March 2017</h3>
 <h5>SQL Query Example</h5>
 <div class="code-box">
-  <pre><code>SELECT
-  SUBSTRING(date, 1, 6) AS month,
-  COUNT(visitId) AS visits,
+  <pre><code>
+SELECT
+  format_date("%Y%m", parse_date("%Y%m%d", date)) as month,
+  SUM(totals.visits) AS visits,
   SUM(totals.pageviews) AS pageviews,
-  SUM(totals.transactions) as transactions
-FROM
-  `bigquery-public-data.google_analytics_sample.ga_sessions_2017*` 
-WHERE 
-  _table_suffix BETWEEN '0101' AND '0331'
-GROUP BY
-  month
-ORDER BY
-  month ASC;
+  SUM(totals.transactions) AS transactions,
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
+WHERE _TABLE_SUFFIX BETWEEN '0101' AND '0331'
+GROUP BY 1
+ORDER BY 1;
   </code></pre>
 </div>
 <h5>Query results</h5>
 <img src="https://github.com/user-attachments/assets/a2f4dd3e-0be8-4ae3-8202-773a8e9c4eda"  style="width: 100%;">
-
+<h3>Query 02: Bounce rate per traffic source in July 2017</h3>
+<h5>SQL Query Example</h5>
+<div class="code-box">
+  <pre><code>
+SELECT
+    trafficSource.source as source,
+    sum(totals.visits) as total_visits,
+    sum(totals.Bounces) as total_no_of_bounces,
+    (sum(totals.Bounces)/sum(totals.visits))* 100 as bounce_rate
+FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201707*`
+GROUP BY source
+ORDER BY total_visits DESC;
+  </code></pre>
+</div>
+<h5>Query results</h5>
+<img src="https://github.com/user-attachments/assets/28736980-e79e-4611-8490-4c15f3f86f13"  style="width: 100%;">
+<h3>Query 3: Revenue by traffic source by week, by month in June 2017</h3>
+<h5>SQL Query Example</h5>
+<div class="code-box">
+  <pre><code>
+WITH month_data as(
+  SELECT
+    "Month" as time_type,
+    format_date("%Y%m", parse_date("%Y%m%d", date)) as month,
+    trafficSource.source AS source,
+    SUM(p.productRevenue)/1000000 AS revenue
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201706*`,
+    unnest(hits) hits,
+    unnest(product) p
+  WHERE p.productRevenue is not null
+  GROUP BY 1,2,3
+  order by revenue DESC
+),
+week_data as(
+  SELECT
+    "Week" as time_type,
+    format_date("%Y%W", parse_date("%Y%m%d", date)) as week,
+    trafficSource.source AS source,
+    SUM(p.productRevenue)/1000000 AS revenue
+  FROM `bigquery-public-data.google_analytics_sample.ga_sessions_201706*`,
+    unnest(hits) hits,
+    unnest(product) p
+  WHERE p.productRevenue is not null
+  GROUP BY 1,2,3
+  ORDER BY revenue DESC
+)
+SELECT * FROM month_data
+UNION ALL
+SELECT * FROM week_data
+ORDER BY time_type;
+  </code></pre>
+</div>
+<h5>Query results</h5>
+<img src="https://github.com/user-attachments/assets/18c9af75-e874-40db-b5c6-f82ef1ff8bb7"  style="width: 100%;">
