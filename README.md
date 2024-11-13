@@ -90,3 +90,43 @@ ORDER BY time_type;
 </div>
 <h5>Query results</h5>
 <img src="https://github.com/user-attachments/assets/18c9af75-e874-40db-b5c6-f82ef1ff8bb7"  style="width: 100%;">
+<h3>Query 04: Average number of pageviews by purchaser type (purchasers vs non-purchasers) in June, July 2017</h3>
+<h5>SQL Query Example</h5>
+<div class="code-box">
+  <pre><code>
+with 
+purchaser_data as(
+  select
+      format_date("%Y%m",parse_date("%Y%m%d",date)) as month,
+      (sum(totals.pageviews)/count(distinct fullvisitorid)) as avg_pageviews_purchase,
+  from `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
+    ,unnest(hits) hits
+    ,unnest(product) product
+  where _table_suffix between '0601' and '0731'
+  and totals.transactions>=1
+  and product.productRevenue is not null
+  group by month
+),
+
+non_purchaser_data as(
+  select
+      format_date("%Y%m",parse_date("%Y%m%d",date)) as month,
+      sum(totals.pageviews)/count(distinct fullvisitorid) as avg_pageviews_non_purchase,
+  from `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
+      ,unnest(hits) hits
+    ,unnest(product) product
+  where _table_suffix between '0601' and '0731'
+  and totals.transactions is null
+  and product.productRevenue is null
+  group by month
+)
+select
+    pd.*,
+    avg_pageviews_non_purchase
+from purchaser_data pd
+full join non_purchaser_data using(month)
+order by pd.month;
+  </code></pre>
+</div>
+<h5>Query results</h5>
+<img src="https://github.com/user-attachments/assets/639eda90-6d13-4e76-9001-178a908d3c42"  style="width: 100%;">
