@@ -38,5 +38,5 @@ ORDER BY
   </code></pre>
 </div>
 <h5>Query results</h5>
-![image](https://github.com/user-attachments/assets/a2f4dd3e-0be8-4ae3-8202-773a8e9c4eda)
+<img src="https://github.com/user-attachments/assets/a2f4dd3e-0be8-4ae3-8202-773a8e9c4eda">
 
