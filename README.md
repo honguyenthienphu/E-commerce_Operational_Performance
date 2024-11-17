@@ -18,5 +18,25 @@
   <li>Click on the "ga_sessions_" table to open it.</li>
 </ul>
 <h2>IV. Exploring the Dataset</h2>
-<p>In this project, I will write 08 query in Bigquery base on Google Analytics dataset.</p>
-
+<h3>1. Calculate total Visit, Pageview and Transaction for January, February and March 2017</h3>
+<h4>Step:</h4>
+<ul>
+  <li>Step 1: Select the Dataset</li>
+  <li>Step 2: Filter the data from January to March in 2017</li>
+  <div class="code-box">
+    <pre><code>
+    FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
+    WHERE _TABLE_SUFFIX BETWEEN '0101' AND '0331'
+    </code></pre>
+  </div>
+  <li>Step 3: Count total Visit, Pageview and Transaction</li>
+  <div class="code-box">
+    <pre><code>
+    SUM(totals.visits) AS visits,
+    SUM(totals.pageviews) AS pageviews,
+    SUM(totals.transactions) AS transactions
+    </code></pre>  
+  </div>
+</ul>
+<h4>Result:</h4>
+<img src="https://github.com/user-attachments/assets/9f7fb8c3-f157-4a9a-8df1-8d9d572a7f2b" alt="Query 1" style="width: 100%;">
