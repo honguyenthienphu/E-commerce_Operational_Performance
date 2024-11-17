@@ -40,3 +40,20 @@
 </ul>
 <h4>Result:</h4>
 <img src="https://github.com/user-attachments/assets/9f7fb8c3-f157-4a9a-8df1-8d9d572a7f2b" alt="Query 1" style="width: 100%;">
+<h3>2. Query 2 - Count Bounce rate per traffic source in July 2017</h3>
+<h4>Step:</h4>
+<ul>
+  <li>Step 1: Select the Dataset</li>
+  <li>Step 2: Group the data by Traffic source</li>
+  <li>Step 3: Calculate the Bounce rate</li>
+  <div class="code-box">
+    <pre><code>
+    trafficSource.source AS source,
+    SUM(totals.visits) AS total_visits,
+    SUM(totals.Bounces) AS total_no_of_bounces,
+    (SUM(totals.Bounces)/SUM(totals.visits))* 100 AS bounce_rate
+    </code></pre>  
+  </div>
+</ul>
+<h4>Result:</h4>
+<img src="https://github.com/user-attachments/assets/2048b600-f3d3-4c28-8a7d-39fa0c9d4bd0" alt="Query 1" style="width: 100%;">
