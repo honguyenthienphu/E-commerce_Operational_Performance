@@ -40,12 +40,12 @@
 </ul>
 <h4>Result:</h4>
 <img src="https://github.com/user-attachments/assets/9f7fb8c3-f157-4a9a-8df1-8d9d572a7f2b" alt="Query 1" style="width: 100%;">
-<h3>2. Query 2 - Count Bounce rate per traffic source in July 2017</h3>
+<h3>2. Query 2 - Calculate Bounce rate per traffic source in July 2017</h3>
 <h4>Step:</h4>
 <ul>
   <li>Step 1: Select the Dataset</li>
   <li>Step 2: Group the data by Traffic source</li>
-  <li>Step 3: Calculate the Bounce rate</li>
+  <li>Step 3: Calculate the Bounce rate per traffic source</li>
   <div class="code-box">
     <pre><code>
     trafficSource.source AS source,
@@ -57,3 +57,36 @@
 </ul>
 <h4>Result:</h4>
 <img src="https://github.com/user-attachments/assets/2048b600-f3d3-4c28-8a7d-39fa0c9d4bd0" alt="Query 1" style="width: 100%;">
+<h3>2. Query 3 - Calculate Revenue by traffic source by week, by month in June 2017</h3>
+<h4>Step:</h4>
+<ul>
+  <li>Step 1: Select the Dataset</li>
+  <li>Step 2: Separate month and week data then union all</li>
+  <li>Step 3: Unnest hits and product to access productRevenue field</li>
+  <li>Step 4: Calculate Revenue by traffic source</li>
+    <div class="code-box">
+    <pre><code>
+    WITH month_table AS (
+      SELECT
+        'MONTH' AS time_type,
+        SUBSTRING(date, 1, 6) AS time,
+        trafficSource.`source` AS source,
+        ROUND(SUM(product.productRevenue) / 1000000, 4) AS revenue
+    </code></pre>
+    <pre><code>
+    week_table AS (
+      SELECT
+        'WEEK' AS time_type,
+        FORMAT_TIMESTAMP('%Y%W', PARSE_TIMESTAMP('%Y%m%d', date)) AS time,
+        trafficSource.`source` AS source,
+        ROUND(SUM(product.productRevenue) / 1000000, 4) AS revenue
+    </code></pre>
+    <pre><code>
+    SELECT * FROM month_table
+    UNION ALL
+    SELECT * FROM week_table
+    ORDER BY
+      revenue DESC;
+    </code></pre>  
+  </div>
+</ul>
