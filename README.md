@@ -18,7 +18,7 @@
   <li>Click on the "ga_sessions_" table to open it.</li>
 </ul>
 <h2>IV. Exploring the Dataset</h2>
-<h3>1. Calculate total Visit, Pageview and Transaction for January, February and March 2017</h3>
+<h3>1. Query 1 - Calculate total Visit, Pageview and Transaction for January, February and March 2017</h3>
 <h4>Step:</h4>
 <ul>
   <li>Step 1: Select the Dataset</li>
