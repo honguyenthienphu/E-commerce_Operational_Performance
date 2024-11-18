@@ -140,4 +140,26 @@
     </div>  
 </ul>
 <h4>Result:</h4>
-<img src="https://github.com/user-attachments/assets/4d9de549-c9ec-49b9-9c80-8b9db2e602ec" alt="Query 4" style="width: 100%;">
+<img src="https://github.com/user-attachments/assets/4d9de549-c9ec-49b9-9c80-8b9db2e602ec" alt="Query 5" style="width: 100%;">
+
+<h3>6. Query 6 - Calculate Average amount of money spent per session. Only include purchaser data in July 2017</h3>
+<h4>Step:</h4>
+<ul>
+  <li>Step 1: Select the Dataset</li>
+  <li>Step 2: Calculate Average amount of money spent per session</li>
+    <div class="code-box">
+    <pre><code>
+    select
+      format_date("%Y%m",parse_date("%Y%m%d",date)) as month,
+      ((sum(product.productRevenue)/sum(totals.visits))/power(10,6)) as avg_revenue_by_user_per_visit
+    from `bigquery-public-data.google_analytics_sample.ga_sessions_201707*`
+      ,unnest(hits) hits
+      ,unnest(product) product
+    where product.productRevenue is not null
+    and totals.transactions>=1
+    group by month;
+    </code></pre>
+    </div>  
+</ul>
+<h4>Result:</h4>
+<img src="https://github.com/user-attachments/assets/f988eec1-5fec-481a-9fa7-8b796dfa7dd5" alt="Query 6" style="width: 100%;">
