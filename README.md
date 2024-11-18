@@ -18,6 +18,7 @@
   <li>Click on the "ga_sessions_" table to open it.</li>
 </ul>
 <h2>IV. Exploring the Dataset</h2>
+
 <h3>1. Query 1 - Calculate total Visit, Pageview and Transaction for January, February and March 2017</h3>
 <h4>Step:</h4>
 <ul>
@@ -40,6 +41,7 @@
 </ul>
 <h4>Result:</h4>
 <img src="https://github.com/user-attachments/assets/9f7fb8c3-f157-4a9a-8df1-8d9d572a7f2b" alt="Query 1" style="width: 100%;">
+
 <h3>2. Query 2 - Calculate Bounce rate per traffic source in July 2017</h3>
 <h4>Step:</h4>
 <ul>
@@ -56,8 +58,9 @@
   </div>
 </ul>
 <h4>Result:</h4>
-<img src="https://github.com/user-attachments/assets/2048b600-f3d3-4c28-8a7d-39fa0c9d4bd0" alt="Query 1" style="width: 100%;">
-<h3>2. Query 3 - Calculate Revenue by traffic source by week, by month in June 2017</h3>
+<img src="https://github.com/user-attachments/assets/2048b600-f3d3-4c28-8a7d-39fa0c9d4bd0" alt="Query 2" style="width: 100%;">
+
+<h3>3. Query 3 - Calculate Revenue by traffic source by week, by month in June 2017</h3>
 <h4>Step:</h4>
 <ul>
   <li>Step 1: Select the Dataset</li>
@@ -90,3 +93,35 @@
     </code></pre>  
   </div>
 </ul>
+<h4>Result:</h4>
+<img src="https://github.com/user-attachments/assets/d0ba34b9-c6b8-43bb-9310-9c6710542d7f" alt="Query 3" style="width: 100%;">
+
+<h3>4. Query 4 - Calculate Average number of pageviews by purchaser type (purchasers vs non-purchasers) in June, July 2017</h3>
+<h4>Step:</h4>
+<ul>
+  <li>Step 1: Select the Dataset</li>
+  <li>Step 2: Create a table with Purchaser</li>
+    <div class="code-box">
+    <pre><code>
+    WITH purchase_table AS (
+    SELECT
+      SUBSTRING(date, 1, 6) AS month,
+      ROUND(SUM(totals.pageviews) / COUNT(DISTINCT(fullVisitorId)), 7) AS avg_pageviews_purchase
+    FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`,
+    </code></pre>
+    </div>  
+  <li>Step 3: Create a table with Non-Purchaser</li>
+    <div class="code-box">
+    <pre><code>
+    non_purchase_table AS (
+    SELECT
+      SUBSTRING(date, 1, 6) AS month,
+      ROUND(SUM(totals.pageviews) / COUNT(DISTINCT(fullVisitorId)), 7) AS avg_pageviews_non_purchase
+    FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`,
+    </code></pre>
+    </div>  
+  <li>Step 4: Join two tables to compare Average number of pageviews</li>
+</ul>
+<h4>Result:</h4>
+<img src="https://github.com/user-attachments/assets/1b579419-9d58-4caf-9cbf-67adf980ba2e" alt="Query 4" style="width: 100%;">
+
