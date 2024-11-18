@@ -187,3 +187,23 @@
 </ul>
 <h4>Result:</h4>
 <img src="https://github.com/user-attachments/assets/a029c093-51b7-4136-b37d-606d201ce05b" alt="Query 7" style="width: 100%;">
+
+<h3>8. Query 8 - Calculate cohort map from product view to addtocart to purchase in Jan, Feb and March 2017</h3>
+<h4>Step:</h4>
+<ul>
+  <li>Step 1: Select the Dataset</li>
+  <li>Step 2: Create a product data</li>
+  <div class="code-box">
+    <pre><code>
+    with product_data as(
+    select
+      format_date('%Y%m', parse_date('%Y%m%d',date)) as month,
+      count(CASE WHEN eCommerceAction.action_type = '2' THEN product.v2ProductName END) as num_product_view,
+      count(CASE WHEN eCommerceAction.action_type = '3' THEN product.v2ProductName END) as num_add_to_cart,
+      count(CASE WHEN eCommerceAction.action_type = '6' and product.productRevenue is not null THEN product.v2ProductName END) as num_purchase
+    FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`
+    </code></pre>
+    </div>  
+</ul>
+<h4>Result:</h4>
+<img src="https://github.com/user-attachments/assets/cffb902c-d096-4d12-9938-eb417420bd26" alt="Query 7" style="width: 100%;">
