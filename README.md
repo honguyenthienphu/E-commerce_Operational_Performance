@@ -125,3 +125,19 @@
 <h4>Result:</h4>
 <img src="https://github.com/user-attachments/assets/1b579419-9d58-4caf-9cbf-67adf980ba2e" alt="Query 4" style="width: 100%;">
 
+<h3>5. Query 5 - Calculate Average number of transactions per user that made a purchase in July 2017</h3>
+<h4>Step:</h4>
+<ul>
+  <li>Step 1: Select the Dataset </li>
+  <li>Step 2: Calculate Average number of transactions per user</li>
+    <div class="code-box">
+    <pre><code>
+    SELECT
+      SUBSTRING(date, 1, 6) AS month,
+      ROUND(SUM(totals.transactions) / COUNT(DISTINCT(fullVisitorId)), 9) AS Avg_total_transactions_per_user
+    FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`,
+    </code></pre>
+    </div>  
+</ul>
+<h4>Result:</h4>
+<img src="https://github.com/user-attachments/assets/4d9de549-c9ec-49b9-9c80-8b9db2e602ec" alt="Query 4" style="width: 100%;">
