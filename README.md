@@ -163,3 +163,27 @@
 </ul>
 <h4>Result:</h4>
 <img src="https://github.com/user-attachments/assets/f988eec1-5fec-481a-9fa7-8b796dfa7dd5" alt="Query 6" style="width: 100%;">
+
+<h3>7. Query 7 - Show product name and the quantity purchased from selected customer</h3>
+<h4>Step:</h4>
+<ul>
+  <li>Step 1: Select the Dataset</li>
+  <li>Step 2: Create a selected customer table</li>
+    <div class="code-box">
+    <pre><code>
+    WITH selected_customer AS (
+    SELECT
+      DISTINCT(visitId) 
+    FROM
+      `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`,
+      UNNEST(hits) hits,
+      UNNEST(product) product
+    WHERE
+      v2ProductName = "YouTube Men's Vintage Henley"
+      AND _table_suffix BETWEEN '0701' AND '0731'
+      AND product.productRevenue IS NOT NULL)
+    </code></pre>
+    </div>  
+</ul>
+<h4>Result:</h4>
+<img src="https://github.com/user-attachments/assets/a029c093-51b7-4136-b37d-606d201ce05b" alt="Query 7" style="width: 100%;">
