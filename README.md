@@ -19,8 +19,8 @@
 </ul>
 <h2>IV. Exploring the Dataset</h2>
 
-<h3>1. Query 1 - Calculate total Visit, Pageview and Transaction for January, February and March 2017</h3>
-<h4>Step:</h4>
+<h3>1. Query 1 - Calculate Total Visits, Pageviews and Transactions for January, February and March 2017</h3>
+<h4>1.1 Steps:</h4>
 <ul>
   <li>Step 1: Select the Dataset</li>
   <li>Step 2: Filter the data from January to March in 2017</li>
@@ -39,29 +39,40 @@
     </code></pre>  
   </div>
 </ul>
-<h4>Result:</h4>
+<h4>1.2 Result:</h4>
 <img src="https://github.com/user-attachments/assets/9f7fb8c3-f157-4a9a-8df1-8d9d572a7f2b" alt="Query 1" style="width: 100%;">
+<h4>1.3 Insights:</h4>
+<ul>
+  <li>The highest visits is in March 2017 (69,931 visits in total)</li>
+  <li>Total pageviews have the highest value in March 2017 (259,522 pages) and lowest in February 2017 (233,373 pages)</li>
+  <li>The most transactions made finished in March 2017 (993 finished transactions)</li>
+</ul>
 
 <h3>2. Query 2 - Calculate Bounce rate per traffic source in July 2017</h3>
-<h4>Step:</h4>
+<h4>2.1 Steps:</h4>
 <ul>
   <li>Step 1: Select the Dataset</li>
   <li>Step 2: Group the data by Traffic source</li>
   <li>Step 3: Calculate the Bounce rate per traffic source</li>
   <div class="code-box">
     <pre><code>
-    trafficSource.source AS source,
-    SUM(totals.visits) AS total_visits,
-    SUM(totals.Bounces) AS total_no_of_bounces,
-    (SUM(totals.Bounces)/SUM(totals.visits))* 100 AS bounce_rate
+    trafficSource.source as source,
+    sum(totals.visits) as total_visits,
+    sum(totals.Bounces) as total_no_of_bounces,
+    (sum(totals.Bounces)/sum(totals.visits))* 100 as bounce_rate
     </code></pre>  
   </div>
 </ul>
-<h4>Result:</h4>
+<h4>2.2 Result:</h4>
 <img src="https://github.com/user-attachments/assets/2048b600-f3d3-4c28-8a7d-39fa0c9d4bd0" alt="Query 2" style="width: 100%;">
+<h4>2.3 Insights:</h4>
+<ul>
+  <li>Show the total visits and bounces from each source: Example with Google are 38400 and 19798</li>
+  <li>The bounce rate will be 19798/38400 equal to 51.55%</li>
+</ul>
 
 <h3>3. Query 3 - Calculate Revenue by traffic source by week, by month in June 2017</h3>
-<h4>Step:</h4>
+<h4>3.1 Steps:</h4>
 <ul>
   <li>Step 1: Select the Dataset</li>
   <li>Step 2: Separate month and week data then union all</li>
@@ -69,61 +80,83 @@
   <li>Step 4: Calculate Revenue by traffic source</li>
     <div class="code-box">
     <pre><code>
-    WITH month_table AS (
-      SELECT
-        'MONTH' AS time_type,
-        SUBSTRING(date, 1, 6) AS time,
-        trafficSource.`source` AS source,
-        ROUND(SUM(product.productRevenue) / 1000000, 4) AS revenue
+    with month_data as(
+      select
+        "Month" as time_type,
+        format_date("%Y%m", parse_date("%Y%m%d", date)) as month,
+        trafficSource.source as source,
+        sum(p.productRevenue)/1000000 as revenue
+      from `bigquery-public-data.google_analytics_sample.ga_sessions_201706*`,
     </code></pre>
     <pre><code>
-    week_table AS (
-      SELECT
-        'WEEK' AS time_type,
-        FORMAT_TIMESTAMP('%Y%W', PARSE_TIMESTAMP('%Y%m%d', date)) AS time,
-        trafficSource.`source` AS source,
-        ROUND(SUM(product.productRevenue) / 1000000, 4) AS revenue
+    week_data as(
+      select
+        "Week" as time_type,
+        format_date("%Y%W", parse_date("%Y%m%d", date)) as week,
+        trafficSource.source AS source,
+        sum(p.productRevenue)/1000000 as revenue
+      from `bigquery-public-data.google_analytics_sample.ga_sessions_201706*`,
     </code></pre>
     <pre><code>
-    SELECT * FROM month_table
-    UNION ALL
-    SELECT * FROM week_table
-    ORDER BY
-      revenue DESC;
+    select * from month_data
+    union all
+    select * from week_data;
+    order by time_type
     </code></pre>  
   </div>
 </ul>
-<h4>Result:</h4>
+<h4>3.2 Result:</h4>
 <img src="https://github.com/user-attachments/assets/d0ba34b9-c6b8-43bb-9310-9c6710542d7f" alt="Query 3" style="width: 100%;">
+<h4>3.3 Insights:</h4>
+<ul>
+  <li>The total revenue from different sources by week, by month in June 2017</li>
+  <li>Google in June 2016: 18757</li>
+  <li>Google in the first week in June 2016: 5330</li>
+</ul>
 
 <h3>4. Query 4 - Calculate Average number of pageviews by purchaser type (purchasers vs non-purchasers) in June, July 2017</h3>
-<h4>Step:</h4>
+<h4>4.1 Steps:</h4>
 <ul>
   <li>Step 1: Select the Dataset</li>
   <li>Step 2: Create a table with Purchaser</li>
     <div class="code-box">
     <pre><code>
-    WITH purchase_table AS (
-    SELECT
-      SUBSTRING(date, 1, 6) AS month,
-      ROUND(SUM(totals.pageviews) / COUNT(DISTINCT(fullVisitorId)), 7) AS avg_pageviews_purchase
-    FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`,
+    with purchaser_data as (
+      select
+          format_date("%Y%m",parse_date("%Y%m%d",date)) as month,
+          (sum(totals.pageviews)/count(distinct fullvisitorid)) as avg_pageviews_purchase,
+      from `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
     </code></pre>
     </div>  
   <li>Step 3: Create a table with Non-Purchaser</li>
     <div class="code-box">
     <pre><code>
-    non_purchase_table AS (
-    SELECT
-      SUBSTRING(date, 1, 6) AS month,
-      ROUND(SUM(totals.pageviews) / COUNT(DISTINCT(fullVisitorId)), 7) AS avg_pageviews_non_purchase
-    FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`,
+    non_purchaser_data as (
+      select
+      format_date("%Y%m",parse_date("%Y%m%d",date)) as month,
+      sum(totals.pageviews)/count(distinct fullvisitorid) as avg_pageviews_non_purchase,
+    from `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
     </code></pre>
     </div>  
   <li>Step 4: Join two tables to compare Average number of pageviews</li>
+  <div class="code-box">
+    <pre><code>
+    select
+      pd.*,
+      avg_pageviews_non_purchase
+    from purchaser_data pd
+    full join non_purchaser_data using(month)
+    order by pd.month;
+    </code></pre>
+    </div>  
 </ul>
-<h4>Result:</h4>
+<h4>4.2 Result:</h4>
 <img src="https://github.com/user-attachments/assets/1b579419-9d58-4caf-9cbf-67adf980ba2e" alt="Query 4" style="width: 100%;">
+<h4>4.3 Insights:</h4>
+<ul>
+  <li>Compare average pageviews between purchaser and non-purchaser in June, July 2017</li>
+  <li>Average pageviews with non-purchaser is higher than purchaser both in June and July</li>
+</ul>
 
 <h3>5. Query 5 - Calculate Average number of transactions per user that made a purchase in July 2017</h3>
 <h4>Step:</h4>
