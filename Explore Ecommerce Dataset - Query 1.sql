@@ -1,13 +1,9 @@
-SELECT
-  SUBSTRING(date, 1, 6) AS month,
-  COUNT(visitId) AS visits,
-  SUM(totals.pageviews) AS pageviews,
-  SUM(totals.transactions) as transactions
-FROM
-  `bigquery-public-data.google_analytics_sample.ga_sessions_2017*` 
-WHERE 
-  _table_suffix BETWEEN '0101' AND '0331'
-GROUP BY
-  month
-ORDER BY
-  month ASC;
+select
+  format_date("%Y%m", parse_date("%Y%m%d", date)) as month,
+  sum(totals.visits) as visits,
+  sum(totals.pageviews) as pageviews,
+  sum(totals.transactions) as transactions,
+from `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
+where _TABLE_SUFFIX between '0101' and '0331'
+group by 1
+order by 1;
