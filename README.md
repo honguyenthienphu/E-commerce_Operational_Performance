@@ -159,24 +159,28 @@
 </ul>
 
 <h3>5. Query 5 - Calculate Average number of transactions per user that made a purchase in July 2017</h3>
-<h4>Step:</h4>
+<h4>5.1 Steps:</h4>
 <ul>
   <li>Step 1: Select the Dataset </li>
   <li>Step 2: Calculate Average number of transactions per user</li>
     <div class="code-box">
     <pre><code>
-    SELECT
-      SUBSTRING(date, 1, 6) AS month,
-      ROUND(SUM(totals.transactions) / COUNT(DISTINCT(fullVisitorId)), 9) AS Avg_total_transactions_per_user
-    FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`,
+    select
+      format_date("%Y%m",parse_date("%Y%m%d",date)) as month,
+      sum(totals.transactions)/count(distinct fullvisitorid) as Avg_total_transactions_per_user
+    from `bigquery-public-data.google_analytics_sample.ga_sessions_201707*`
     </code></pre>
     </div>  
 </ul>
-<h4>Result:</h4>
+<h4>5.2 Result:</h4>
 <img src="https://github.com/user-attachments/assets/4d9de549-c9ec-49b9-9c80-8b9db2e602ec" alt="Query 5" style="width: 100%;">
+<h4>5.3 Insights:</h4>
+<ul>
+  <li>Average transactions per customer is about 4.16 times in month</li>
+</ul>
 
 <h3>6. Query 6 - Calculate Average amount of money spent per session. Only include purchaser data in July 2017</h3>
-<h4>Step:</h4>
+<h4>6.1 Steps:</h4>
 <ul>
   <li>Step 1: Select the Dataset</li>
   <li>Step 2: Calculate Average amount of money spent per session</li>
@@ -194,49 +198,66 @@
     </code></pre>
     </div>  
 </ul>
-<h4>Result:</h4>
+<h4>6.2 Result:</h4>
 <img src="https://github.com/user-attachments/assets/f988eec1-5fec-481a-9fa7-8b796dfa7dd5" alt="Query 6" style="width: 100%;">
+<h4>6.3 Insights:</h4>
+<ul>
+  <li>Average amount spent per customer is about $43.85 times in July 2017</li>
+</ul>
 
 <h3>7. Query 7 - Show product name and the quantity purchased from selected customer</h3>
-<h4>Step:</h4>
+<h4>7.1 Steps:</h4>
 <ul>
   <li>Step 1: Select the Dataset</li>
   <li>Step 2: Create a selected customer table</li>
     <div class="code-box">
     <pre><code>
-    WITH selected_customer AS (
-    SELECT
-      DISTINCT(visitId) 
-    FROM
-      `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`,
-      UNNEST(hits) hits,
-      UNNEST(product) product
-    WHERE
-      v2ProductName = "YouTube Men's Vintage Henley"
-      AND _table_suffix BETWEEN '0701' AND '0731'
-      AND product.productRevenue IS NOT NULL)
+    with selected_customer as (
+      select
+        distinct(visitId) 
+      from
+        `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`,
+        unnest(hits) hits,
+        unnest(product) product
+      where
+        v2ProductName = "YouTube Men's Vintage Henley"
+        and _table_suffix between '0701' and '0731'
+        and product.productRevenue is not null
+    )
     </code></pre>
     </div>  
 </ul>
-<h4>Result:</h4>
+<h4>7.2 Result:</h4>
 <img src="https://github.com/user-attachments/assets/a029c093-51b7-4136-b37d-606d201ce05b" alt="Query 7" style="width: 100%;">
+<h4>7.3 Insights:</h4>
+<ul>
+  <li>Customers who purchased product "YouTube Men's Vintage Henley" also purchased the other products:</li>
+  <li>Google Sunglasses: 20pcs</li>
+  <li>Google Women's Vintage Hero Tee Black: 7pcs</li>
+</ul>
 
 <h3>8. Query 8 - Calculate cohort map from product view to addtocart to purchase in Jan, Feb and March 2017</h3>
-<h4>Step:</h4>
+<h4>8.1 Step:</h4>
 <ul>
   <li>Step 1: Select the Dataset</li>
   <li>Step 2: Create a product data</li>
   <div class="code-box">
     <pre><code>
-    with product_data as(
+    with product_data as (
     select
       format_date('%Y%m', parse_date('%Y%m%d',date)) as month,
-      count(CASE WHEN eCommerceAction.action_type = '2' THEN product.v2ProductName END) as num_product_view,
-      count(CASE WHEN eCommerceAction.action_type = '3' THEN product.v2ProductName END) as num_add_to_cart,
-      count(CASE WHEN eCommerceAction.action_type = '6' and product.productRevenue is not null THEN product.v2ProductName END) as num_purchase
-    FROM `bigquery-public-data.google_analytics_sample.ga_sessions_*`
+      count(case when eCommerceAction.action_type = '2' then product.v2ProductName end) as num_product_view,
+      count(case when eCommerceAction.action_type = '3' then product.v2ProductName end) as num_add_to_cart,
+      count(case when eCommerceAction.action_type = '6' and product.productRevenue is not null then product.v2ProductName end) as num_purchase
+    from `bigquery-public-data.google_analytics_sample.ga_sessions_*`
     </code></pre>
     </div>  
 </ul>
-<h4>Result:</h4>
+<h4>8.2 Result:</h4>
 <img src="https://github.com/user-attachments/assets/cffb902c-d096-4d12-9938-eb417420bd26" alt="Query 7" style="width: 100%;">
+<h4>8.3 Insights:</h4>
+<ul>
+  <li>The result show number of views, add-to-cart and purchase times in each month</li>
+  <li>Calculate the add-to-cart and purchase rate in each month</li>
+  <li>In March 2017 has the highest add-to-cart and purchase rate</li>
+</ul>
