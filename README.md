@@ -1,4 +1,4 @@
-# [SQL] Explore Ecommerce Dataset
+# [SQL] E-commerce Operational Performance
 <h2>I. Introduction</h1>
 <p>In this project, I explored an E-commerce dataset using SQL on <a href="https://cloud.google.com/bigquery">Google BigQuery</a> to uncover insights into operational performance.</p>
 <p>The dataset is based on the Google Analytics public dataset and contains data from an E-commerce website.</p>
