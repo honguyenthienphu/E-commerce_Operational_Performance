@@ -1,8 +1,8 @@
 # [SQL] E-commerce Operational Performance
 <h2>I. Introduction</h1>
-<p>In this project, I explored an E-commerce dataset using SQL on <a href="https://cloud.google.com/bigquery">Google BigQuery</a> to uncover insights into operational performance.</p>
-<p>The dataset is based on the Google Analytics public dataset and contains data from an E-commerce website.</p>
-<p>My primary objective is to assess key metrics that impact customer satisfaction, revenue growth, and operational efficiency.</p>
+<p>In this project, focuses on analyzing an E-commerce dataset using SQL on <a href="https://cloud.google.com/bigquery">Google BigQuery</a> to uncover data insights into operational performance.</p>
+<p>The dataset sourced from the Google Analytics public dataset, captures extensive data from an E-commerce platform.</p>
+<p>The primary goal was to evaluate key metrics influencing customer satisfaction, revenue growth, and operational efficiency, providing actionable insights for business improvement.</p>
 <h2>II. Requirements</h2>
 <ul>
   <li><a href="https://cloud.google.com/bigquery">SQL Query Editor or IDE</a></li>
