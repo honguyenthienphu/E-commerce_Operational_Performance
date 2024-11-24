@@ -26,16 +26,16 @@
   <li>Step 2: Filter the data from January to March in 2017</li>
   <div class="code-box">
     <pre><code>
-    FROM `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
-    WHERE _TABLE_SUFFIX BETWEEN '0101' AND '0331'
+    from `bigquery-public-data.google_analytics_sample.ga_sessions_2017*`
+    where _TABLE_SUFFIX between '0101' and '0331'
     </code></pre>
   </div>
   <li>Step 3: Count total Visit, Pageview and Transaction</li>
   <div class="code-box">
     <pre><code>
-    SUM(totals.visits) AS visits,
-    SUM(totals.pageviews) AS pageviews,
-    SUM(totals.transactions) AS transactions
+    sum(totals.visits) as visits,
+    sum(totals.pageviews) as pageviews,
+    sum(totals.transactions) as transactions,
     </code></pre>  
   </div>
 </ul>
